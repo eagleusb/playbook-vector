@@ -1,0 +1,7 @@
+---
+
+# General
+
+working_path: /root
+www_path: /opt/vector
+git_tag: v1.0.2

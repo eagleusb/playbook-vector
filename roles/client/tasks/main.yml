@@ -1,0 +1,34 @@
+---
+- name: Install the base packages
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+     - git
+     - build-essential
+     - autoconf
+     - libmicrohttpd10
+     - libmicrohttpd-dev
+     - pkg-config
+
+- name: Build dependencies for PCP
+  apt: name=pcp state=build-dep update_cache=no
+
+- name: Get the 3.10+ PCP source code
+  git: repo=git://git.pcp.io/pcp dest={{ working_path }}/pcp version="{{ git_tag }}" accept_hostkey=yes
+
+- name: Add the PCP group to the system
+  group: name=pcp
+
+- name: Add the PCP user to the system
+  user: name=pcp group=pcp shell=/bin/false comment="PCP framework user" createhome=no
+
+- name: Install PCP 3.10+ system wide
+  shell: ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var && make && make install
+  args:
+    chdir: "{{ working_path }}/pcp"
+
+- name: Manage the PCP initd service
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - pcp
+    - pmlogger
+    - pmwebd

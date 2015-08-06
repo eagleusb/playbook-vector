@@ -1,0 +1,16 @@
+---
+# This playbook deploys the master node and the PCP framework for Netflix Vector
+
+- name: Vector master node deployment
+  hosts: master
+  remote_user: root
+  roles:
+    - master
+  tags: master
+
+- name: Vector PCP client node deployment
+  hosts: client
+  remote_user: root
+  roles:
+    - client
+  tags: client

@@ -1,0 +1,39 @@
+---
+- name: Install the base packages
+  apt: name={{ item }} state=latest
+  with_items:
+     - git
+     - npm
+     - nodejs
+     - nodejs-legacy
+
+- name: Install Bower ang Gulp via npm
+  npm: name="{{ item }}" global=yes state=latest
+  with_items:
+    - bower
+    - gulp
+
+- name: Get the Vector source code
+  git: repo=https://github.com/Netflix/vector.git dest={{ working_path }}/vector version="{{ git_tag }}"
+
+- name: Bower packages installation
+  shell: "{{ item }}"
+  args:
+    chdir: "{{ working_path }}/vector"
+  with_items:
+    - bower install --allow-root
+    - npm install
+    - gulp
+
+- name: Create {{ www_path }}
+  file: path="{{ www_path }}" state=directory mode=0755
+
+- name: Install Vector www app
+  shell: mv dist/* "{{ www_path }}"
+  args:
+    chdir: "{{ working_path }}/vector"
+
+- name: Start Python Webserver
+  shell: screen -AmdS Vector python -m SimpleHTTPServer 80
+  args:
+    chdir: "{{ www_path }}"
