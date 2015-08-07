@@ -14,7 +14,13 @@
     - gulp
 
 - name: Get the Vector source code
-  git: repo=https://github.com/Netflix/vector.git dest={{ working_path }}/vector version="{{ git_tag }}"
+  git: repo=https://github.com/Netflix/vector.git dest={{ working_path }}/vector version="{{ git_tag }}" force=yes
+
+- name: Configure Vector app
+  lineinfile: dest="{{ working_path }}/vector{{ vector_app_config }}" regexp=\'enableCpuFlameGraph\'.*,$ line=\'enableCpuFlameGraph\'':'\ true,
+
+- name: Configure Vector app
+  lineinfile: dest="{{ working_path }}/vector{{ vector_app_config }}" regexp=\'enableDiskLatencyHeatMap\'.*$ line=\'enableDiskLatencyHeatMap\'':'\ true
 
 - name: Bower packages installation
   shell: "{{ item }}"
