@@ -19,10 +19,10 @@
   group: name=pcp
 
 - name: Add the PCP user to the system
-  user: name=pcp group=pcp shell=/bin/false comment="PCP framework user" createhome=no
+  user: name=pcp group=pcp shell=/bin/false comment="PCP framework user" createhome=no home=/var/lib/pcp
 
 - name: Install PCP 3.10+ system wide
-  shell: ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var && make && make install
+  shell: ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --with-webapi && make && make install
   args:
     chdir: "{{ working_path }}/pcp"
 
